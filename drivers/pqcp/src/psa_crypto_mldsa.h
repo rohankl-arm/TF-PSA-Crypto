@@ -24,18 +24,6 @@
  */
 #define PSA_KEY_TYPE_ML_DSA_KEY_PAIR ((psa_key_type_t) 0x7002)
 
-/** The type of an ML-DSA public key.
- *
- * The `bits` attribute of the key indicates the parameter set:
- * 44, 56 or 87.
- */
-#define PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY ((psa_key_type_t) 0x4002)
-
-/** Whether the key type is an ML-DSA key (key pair or public key). */
-#define PSA_KEY_TYPE_IS_ML_DSA(type)                                    \
-    ((type) == PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY ||                        \
-     (type) == PSA_KEY_TYPE_ML_DSA_KEY_PAIR)
-
 /** Hedged pure ML-DSA (without pre-hashing). */
 #define PSA_ALG_ML_DSA ((psa_algorithm_t) 0x06004400)
 
@@ -57,6 +45,36 @@
 #define PSA_MLDSA_SIGNATURE_MAX_SIZE (PSA_MLDSA_SIGNATURE_SIZE(87))
 
 #if defined(TF_PSA_CRYPTO_PQCP_MLDSA_ENABLED)
+
+/**
+ * RKL
+ * \brief Import MLDSA key.
+ *
+ * \note The signature of the function is that of a PSA driver import_key
+ *       entry point.
+ *
+ * \param[in]  attributes       The attributes for the key to import.
+ * \param[in]  data             The buffer containing the key data in import
+ *                              format.
+ * \param[in]  data_length      Size of the \p data buffer in bytes.
+ * \param[out] key_buffer       The buffer containing the key data in output
+ *                              format.
+ * \param[in]  key_buffer_size  Size of the \p key_buffer buffer in bytes. This
+ *                              size is greater or equal to \p data_length.
+ * \param[out] key_buffer_length  The length of the data written in \p
+ *                                key_buffer in bytes.
+ * \param[out] bits             The key size in number of bits.
+ *
+ * \retval #PSA_SUCCESS
+ *         The key was generated successfully.
+ * \retval #PSA_ERROR_BUFFER_TOO_SMALL
+ *         The size of \p key_buffer is too small.
+ */
+psa_status_t mbedtls_psa_mldsa_import_key(
+    const psa_key_attributes_t *attributes,
+    const uint8_t *data, size_t data_length,
+    uint8_t *key_buffer, size_t key_buffer_size,
+    size_t *key_buffer_length, size_t *bits);
 
 /** Export the public key of an ML-DSA key pair.
  *
